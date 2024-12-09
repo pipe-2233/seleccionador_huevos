@@ -10,51 +10,56 @@
         body {
             background-color: #f8f9fa;
         }
-        #previewCanvas {
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-        }
         video {
             display: block;
             margin: 20px auto;
             max-width: 100%;
+        }
+        #cameraPreview {
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="text-center text-primary">Egg Quality Detector - Real-Time</h1>
-        <p class="text-center text-muted">Upload an image or video to analyze egg quality in real-time</p>
+        <p class="text-center text-muted">Upload, link, or capture video to analyze egg quality in real-time</p>
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <!-- Image Upload Section -->
-                <h4>Analyze Image</h4>
-                <form id="uploadImageForm">
-                    <div class="mb-3">
-                        <label for="imageInput" class="form-label">Upload Image</label>
-                        <input class="form-control" type="file" id="imageInput" accept="image/*" required>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Analyze Image</button>
-                    </div>
-                </form>
-                <canvas id="previewCanvas" class="mt-4 mx-auto d-block" width="400" height="300"></canvas>
-                <hr>
-
+            <div class="col-md-8">
                 <!-- Video Upload Section -->
-                <h4>Analyze Video (Real-Time)</h4>
-                <form id="uploadVideoForm">
-                    <div class="mb-3">
-                        <label for="videoInput" class="form-label">Upload Video</label>
-                        <input class="form-control" type="file" id="videoInput" accept="video/*" required>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-secondary">Analyze Video</button>
-                    </div>
+                <h4>Analyze Video</h4>
+                <div class="mb-4">
+                    <button class="btn btn-secondary me-2" onclick="showSection('file')">Upload File</button>
+                    <button class="btn btn-secondary me-2" onclick="showSection('url')">Use URL</button>
+                    <button class="btn btn-secondary" onclick="showSection('camera')">Use Camera</button>
+                </div>
+
+                <!-- File Upload -->
+                <form id="uploadVideoForm" class="d-none">
+                    <label for="videoInput" class="form-label">Upload Video File</label>
+                    <input class="form-control mb-3" type="file" id="videoInput" accept="video/*">
+                    <button type="submit" class="btn btn-primary">Analyze File</button>
                 </form>
-                <video id="videoPreview" controls></video>
+
+                <!-- Video URL -->
+                <form id="videoURLForm" class="d-none">
+                    <label for="videoURLInput" class="form-label">Enter Video URL</label>
+                    <input class="form-control mb-3" type="url" id="videoURLInput" placeholder="https://example.com/video.mp4">
+                    <button type="submit" class="btn btn-primary">Analyze URL</button>
+                </form>
+
+                <!-- Camera Capture -->
+                <div id="cameraSection" class="d-none">
+                    <video id="cameraPreview" autoplay></video>
+                    <button class="btn btn-danger mt-3" onclick="stopCamera()">Stop Camera</button>
+                </div>
+
+                <!-- Results -->
+                <video id="videoPreview" controls class="mt-4"></video>
                 <div id="videoResults" class="mt-3 text-center">
-                    <p class="text-muted">Video results will appear here...</p>
+                    <p class="text-muted">Results will appear here...</p>
                 </div>
             </div>
         </div>
@@ -63,24 +68,64 @@
     <script>
         const apiKey = "u247o3wH5luRvqN29OnN";
         const videoApiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
-
-        const videoInput = document.getElementById('videoInput');
-        const uploadVideoForm = document.getElementById('uploadVideoForm');
         const videoPreview = document.getElementById('videoPreview');
         const videoResults = document.getElementById('videoResults');
+        const cameraPreview = document.getElementById('cameraPreview');
+        let cameraStream;
 
-        // Handle Video Upload
-        uploadVideoForm.addEventListener('submit', async function(event) {
+        // Show/Hide sections
+        function showSection(type) {
+            document.getElementById('uploadVideoForm').classList.toggle('d-none', type !== 'file');
+            document.getElementById('videoURLForm').classList.toggle('d-none', type !== 'url');
+            document.getElementById('cameraSection').classList.toggle('d-none', type !== 'camera');
+
+            if (type === 'camera') startCamera();
+        }
+
+        // Handle File Upload
+        document.getElementById('uploadVideoForm').addEventListener('submit', async (event) => {
             event.preventDefault();
-            const file = videoInput.files[0];
-            if (!file) {
-                alert('Please upload a video!');
-                return;
-            }
+            const file = document.getElementById('videoInput').files[0];
+            if (!file) return alert('Please select a video file.');
 
             const formData = new FormData();
             formData.append("file", file);
+            await analyzeVideo(formData);
+        });
 
+        // Handle Video URL
+        document.getElementById('videoURLForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const videoURL = document.getElementById('videoURLInput').value;
+            if (!videoURL) return alert('Please enter a video URL.');
+
+            const formData = new FormData();
+            formData.append("url", videoURL);
+            await analyzeVideo(formData);
+        });
+
+        // Start Camera
+        async function startCamera() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraPreview.srcObject = cameraStream;
+                cameraPreview.style.display = "block";
+            } catch (error) {
+                alert('Unable to access camera.');
+            }
+        }
+
+        // Stop Camera
+        function stopCamera() {
+            if (cameraStream) {
+                const tracks = cameraStream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+            cameraPreview.style.display = "none";
+        }
+
+        // Analyze Video
+        async function analyzeVideo(formData) {
             try {
                 const response = await fetch(`${videoApiUrl}?api_key=${apiKey}`, {
                     method: "POST",
@@ -97,8 +142,9 @@
                 console.error(error);
                 alert('Error: Unable to process the video.');
             }
-        });
+        }
 
+        // Poll Video Results
         async function pollVideoResults(jobId) {
             try {
                 const response = await fetch(`${videoApiUrl}/batch-video/${jobId}?api_key=${apiKey}`);
@@ -117,6 +163,7 @@
             }
         }
 
+        // Display Results
         function displayVideoResults(results) {
             videoResults.innerHTML = `
                 <p class="text-success">Video processed successfully!</p>

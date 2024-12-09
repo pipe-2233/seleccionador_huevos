@@ -78,29 +78,35 @@
                 alert('Camera not supported on this device.');
             }
         });
+        
+imageInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                
+                // Calculate the scale and position to center the image
+                const scale = Math.min(
+                    previewCanvas.width / img.width,
+                    previewCanvas.height / img.height
+                );
+                const scaledWidth = img.width * scale;
+                const scaledHeight = img.height * scale;
+                const x = (previewCanvas.width - scaledWidth) / 2;
+                const y = (previewCanvas.height - scaledHeight) / 2;
+                
+                // Draw the image on the canvas
+                ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
 
-        // Handle form submission
-        uploadForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            if (mediaInput.files.length > 0) {
-                // File upload
-                const file = mediaInput.files[0];
-                if (file.type.startsWith('image/')) {
-                    await processImage(file);
-                } else if (file.type.startsWith('video/')) {
-                    await processVideo(file);
-                }
-            } else if (youtubeLink.value) {
-                // YouTube link
-                await processYouTubeLink(youtubeLink.value);
-            } else if (cameraStream) {
-                // Process camera feed
-                processCameraFrame();
-            } else {
-                alert('Please upload a file, provide a YouTube link, or use the camera.');
-            }
-        });
 
         async function processImage(file) {
             const formData = new FormData();

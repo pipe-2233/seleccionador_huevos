@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Egg Quality Detector - Real-Time</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" type="image/png">
     <style>
         body {
             background-color: #f8f9fa;
@@ -154,48 +155,6 @@
                 });
             } else {
                 alert("No predictions found. Try a different image.");
-            }
-        }
-
-        // Handle Video Upload
-        uploadVideoForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const file = videoInput.files[0];
-            if (!file) {
-                alert('Please upload a video!');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            try {
-                videoResults.innerHTML = '<p class="text-muted">Processing video...</p>';
-
-                const response = await fetch(`${videoApiUrl}/batch-video?api_key=${apiKey}`, {
-                    method: "POST",
-                    body: formData,
-                });
-
-                const { job_id } = await response.json();
-                pollVideoResults(job_id);
-            } catch (error) {
-                console.error(error);
-                alert('Error: Unable to process the video.');
-            }
-        });
-
-        async function pollVideoResults(job_id) {
-            const pollUrl = `${videoApiUrl}/batch-video/${job_id}?api_key=${apiKey}`;
-            try {
-                const response = await fetch(pollUrl);
-                const result = await response.json();
-
-                videoResults.innerHTML = '<p class="text-success">Video processed successfully!</p>';
-                // Optionally render frames with predictions here
-            } catch (error) {
-                console.error(error);
-                alert('Error fetching video results.');
             }
         }
     </script>

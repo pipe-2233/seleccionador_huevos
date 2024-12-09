@@ -1,0 +1,1111 @@
+[
+    {
+        "id": "9198709cf1cf22f7",
+        "type": "tab",
+        "label": "Flujo 3",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a4ac76bbcbf9c7ed",
+        "type": "mqtt in",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "huevo_en_posicion",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "5330c993a11be19f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 140,
+        "wires": [
+            [
+                "558ab9e8366c9c51",
+                "f47a3f2e5d232c0f"
+            ]
+        ]
+    },
+    {
+        "id": "f47a3f2e5d232c0f",
+        "type": "ui_chart",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "group": "86b05145095c4feb",
+        "order": 1,
+        "width": 8,
+        "height": 6,
+        "label": "Distancia",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "grafica",
+        "x": 720,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "558ab9e8366c9c51",
+        "type": "debug",
+        "z": "9198709cf1cf22f7",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "fc6c8a7fd6314cf9",
+        "type": "mqtt in",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "clase_huevo",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "5330c993a11be19f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 240,
+        "wires": [
+            [
+                "07c41b406c3429ac",
+                "785bf4604d5789b2"
+            ]
+        ]
+    },
+    {
+        "id": "07c41b406c3429ac",
+        "type": "debug",
+        "z": "9198709cf1cf22f7",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "785bf4604d5789b2",
+        "type": "ui_template",
+        "z": "9198709cf1cf22f7",
+        "group": "86b05145095c4feb",
+        "name": "",
+        "order": 16,
+        "width": 8,
+        "height": 2,
+        "format": "<h2 style=\"text-align: center; font-size: 18px; margin-bottom: 10px;\">Estado del huevo</h2>\n<div style=\"font-size: 14px; text-align: center; color: white; background-color: #4CAF50; padding: 15px 20px; border-radius: 10px; display: inline-block;\">\n    <div style=\"font-weight: bold; font-size: 18px;\">Clase detectada: <span style=\"font-size: 20px; font-weight: bold; color: #fff;\">{{msg.payload}}</span></div>\n</div>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 580,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d93e3b6c37509687",
+        "type": "ui_template",
+        "z": "9198709cf1cf22f7",
+        "group": "86b05145095c4feb",
+        "name": "",
+        "order": 10,
+        "width": 8,
+        "height": 1,
+        "format": "<style>\n    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');\n\n    .md-toolbar-tools {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        height: 100%;\n        text-align: center;\n        font-family: 'Noto Serif', serif;\n        font-weight: 400;\n        font-style: normal;\n        font-optical-sizing: auto;\n        font-size: 36px;\n    }\n    body.nr-dashboard-theme {\n        background-color: #a78be8;\n    }\n</style>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 720,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4cbec584d8ef4341",
+        "type": "mqtt in",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "peso_huevo",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "5330c993a11be19f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "963ea21f141eb594"
+            ]
+        ]
+    },
+    {
+        "id": "963ea21f141eb594",
+        "type": "ui_gauge",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "group": "86b05145095c4feb",
+        "order": 2,
+        "width": 6,
+        "height": 6,
+        "gtype": "gage",
+        "title": "Peso",
+        "label": "Grs",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "200",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 430,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4817e93e872b3c05",
+        "type": "mqtt in",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "tipo_huevo",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "5330c993a11be19f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 440,
+        "wires": [
+            [
+                "4eed29901ca632c3"
+            ]
+        ]
+    },
+    {
+        "id": "4eed29901ca632c3",
+        "type": "switch",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "A",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "AA",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "AAA",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 290,
+        "y": 480,
+        "wires": [
+            [
+                "e1858cd06f050c12"
+            ],
+            [
+                "1a6eced8dc2834fb"
+            ],
+            [
+                "4e03b7dbd6930e15"
+            ]
+        ]
+    },
+    {
+        "id": "e1858cd06f050c12",
+        "type": "function",
+        "z": "9198709cf1cf22f7",
+        "name": "A",
+        "func": "// Si el mensaje es \"reset\", reiniciar el conteo\nif (msg.payload === \"reset\") {\n    context.count = 0;  // Reinicia el conteo a 0\n    msg.payload = {     // Optional: Puedes enviar un mensaje al Dashboard indicando que se ha reiniciado\n        tipo: \"A\",      // Puedes poner el tipo de huevo que corresponda\n        cantidad: context.count\n    };\n    return msg;         // Enviar al Dashboard el mensaje con el conteo reiniciado\n}\n\n// Si el mensaje no es \"reset\", incrementar el conteo\ncontext.count = context.count || 0;  // Si no existe, inicializa en 0\ncontext.count += 1;  // Incrementa el conteo\n\n// Crear el mensaje para enviar al Dashboard\nmsg.payload = {\n    tipo: \"A\",  // Puede cambiarse a \"AA\" o \"AAA\" en otros nodos\n    cantidad: context.count\n};\n\nreturn msg;  // Enviar el conteo actualizado al Dashboard\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 440,
+        "wires": [
+            [
+                "474407fa7ab3aeb5"
+            ]
+        ]
+    },
+    {
+        "id": "1a6eced8dc2834fb",
+        "type": "function",
+        "z": "9198709cf1cf22f7",
+        "name": "AA",
+        "func": "// Si el mensaje es \"reset\", reiniciar el conteo\nif (msg.payload === \"reset\") {\n    context.count = 0;  // Reinicia el conteo a 0\n    msg.payload = {     // Optional: Puedes enviar un mensaje al Dashboard indicando que se ha reiniciado\n        tipo: \"AA\",      // Puedes poner el tipo de huevo que corresponda\n        cantidad: context.count\n    };\n    return msg;         // Enviar al Dashboard el mensaje con el conteo reiniciado\n}\n\n// Si el mensaje no es \"reset\", incrementar el conteo\ncontext.count = context.count || 0;  // Si no existe, inicializa en 0\ncontext.count += 1;  // Incrementa el conteo\n\n// Crear el mensaje para enviar al Dashboard\nmsg.payload = {\n    tipo: \"AA\",  // Puede cambiarse a \"AA\" o \"AAA\" en otros nodos\n    cantidad: context.count\n};\n\nreturn msg;  // Enviar el conteo actualizado al Dashboard\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 500,
+        "wires": [
+            [
+                "638a08cefaeb7b91"
+            ]
+        ]
+    },
+    {
+        "id": "4e03b7dbd6930e15",
+        "type": "function",
+        "z": "9198709cf1cf22f7",
+        "name": "AAA",
+        "func": "// Si el mensaje es \"reset\", reiniciar el conteo\nif (msg.payload === \"reset\") {\n    context.count = 0;  // Reinicia el conteo a 0\n    msg.payload = {     // Optional: Puedes enviar un mensaje al Dashboard indicando que se ha reiniciado\n        tipo: \"AAA\",      // Puedes poner el tipo de huevo que corresponda\n        cantidad: context.count\n    };\n    return msg;         // Enviar al Dashboard el mensaje con el conteo reiniciado\n}\n\n// Si el mensaje no es \"reset\", incrementar el conteo\ncontext.count = context.count || 0;  // Si no existe, inicializa en 0\ncontext.count += 1;  // Incrementa el conteo\n\n// Crear el mensaje para enviar al Dashboard\nmsg.payload = {\n    tipo: \"AAA\",  // Puede cambiarse a \"AA\" o \"AAA\" en otros nodos\n    cantidad: context.count\n};\n\nreturn msg;  // Enviar el conteo actualizado al Dashboard\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 560,
+        "wires": [
+            [
+                "c10d059c7eafab8e"
+            ]
+        ]
+    },
+    {
+        "id": "474407fa7ab3aeb5",
+        "type": "ui_text",
+        "z": "9198709cf1cf22f7",
+        "group": "86b05145095c4feb",
+        "order": 17,
+        "width": 5,
+        "height": 1,
+        "name": "",
+        "label": "Huevos Tipo A :",
+        "format": "{{msg.payload.cantidad}}",
+        "layout": "col-center",
+        "className": "",
+        "style": true,
+        "font": "Lucida Sans Unicode,Lucida Grande,sans-serif",
+        "fontSize": 16,
+        "color": "#a78be8",
+        "x": 720,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "638a08cefaeb7b91",
+        "type": "ui_text",
+        "z": "9198709cf1cf22f7",
+        "group": "86b05145095c4feb",
+        "order": 12,
+        "width": 4,
+        "height": 1,
+        "name": "",
+        "label": "Huevos Tipo AA :",
+        "format": "{{msg.payload.cantidad}}",
+        "layout": "col-center",
+        "className": "",
+        "style": true,
+        "font": "Lucida Sans Unicode,Lucida Grande,sans-serif",
+        "fontSize": 16,
+        "color": "#a78be8",
+        "x": 730,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "c10d059c7eafab8e",
+        "type": "ui_text",
+        "z": "9198709cf1cf22f7",
+        "group": "86b05145095c4feb",
+        "order": 11,
+        "width": 4,
+        "height": 1,
+        "name": "",
+        "label": "Huevos Tipo AAA :",
+        "format": "{{msg.payload.cantidad}}",
+        "layout": "col-center",
+        "className": "",
+        "style": true,
+        "font": "Lucida Sans Unicode,Lucida Grande,sans-serif",
+        "fontSize": 16,
+        "color": "#a78be8",
+        "x": 730,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "bbedf12eeb464290",
+        "type": "ui_form",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "label": "",
+        "group": "f978cae05618ce20",
+        "order": 1,
+        "width": 25,
+        "height": 9,
+        "options": [
+            {
+                "label": "Usuario",
+                "value": "Usuario",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Contraseña",
+                "value": "Contraseña",
+                "type": "password",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "Usuario": "",
+            "Contraseña": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 610,
+        "y": 280,
+        "wires": [
+            [
+                "0333532eb1fb9dad"
+            ]
+        ]
+    },
+    {
+        "id": "df9483fcda45cb50",
+        "type": "ui_button",
+        "z": "9198709cf1cf22f7",
+        "name": "Contadores de Huevos",
+        "group": "86b05145095c4feb",
+        "order": 22,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "label": "Reiniciar Conteos",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "mi-history",
+        "payload": "reset",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 600,
+        "y": 720,
+        "wires": [
+            [
+                "d15bb27ac038f174"
+            ]
+        ]
+    },
+    {
+        "id": "0333532eb1fb9dad",
+        "type": "function",
+        "z": "9198709cf1cf22f7",
+        "name": "function 1",
+        "func": "// Credenciales válidas (puedes adaptarlo para consultar una base de datos u otro servicio)\nconst validUser = \"admin\";\nconst validPass = \"1234\";\n\n// Extraer los valores del formulario\nconst username = msg.payload.username;\nconst password = msg.payload.password;\n\nif (username === validUser && password === validPass) {\n    msg.payload = { success: true, message: \"¡Inicio de sesión exitoso!\" };\n    msg.topic = \"login_success\";\n} else {\n    msg.payload = { success: false, message: \"Credenciales incorrectas. Inténtalo de nuevo.\" };\n    msg.topic = \"login_failed\";\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 280,
+        "wires": [
+            [
+                "b6912adc492a793c"
+            ]
+        ]
+    },
+    {
+        "id": "b6912adc492a793c",
+        "type": "switch",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "login_success",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "login_failed",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 970,
+        "y": 280,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "4820d47270fc51a8",
+        "type": "ui_ui_control",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "events": "all",
+        "x": 1000,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d3881480371c857f",
+        "type": "mqtt in",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "Setpoint",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "5330c993a11be19f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 560,
+        "wires": [
+            [
+                "5eb11dd26cefefd2"
+            ]
+        ]
+    },
+    {
+        "id": "4ec4c6f235935cea",
+        "type": "mqtt in",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "Retroalimentacion",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "5330c993a11be19f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 640,
+        "wires": [
+            [
+                "5eb11dd26cefefd2"
+            ]
+        ]
+    },
+    {
+        "id": "5eb11dd26cefefd2",
+        "type": "ui_chart",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "group": "86b05145095c4feb",
+        "order": 3,
+        "width": 9,
+        "height": 6,
+        "label": "Setpoint Vs Retroalimentacion",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "auto",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "25",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#8100eb",
+            "#1fbd00",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 470,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d7600c2ca62acf66",
+        "type": "debug",
+        "z": "9198709cf1cf22f7",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "d15bb27ac038f174",
+        "type": "change",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "reset",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 620,
+        "wires": [
+            [
+                "e1858cd06f050c12",
+                "1a6eced8dc2834fb",
+                "4e03b7dbd6930e15",
+                "d7600c2ca62acf66"
+            ]
+        ]
+    },
+    {
+        "id": "f4b53c65db430b40",
+        "type": "inject",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "solicitar_excel",
+        "payload": "descargar",
+        "payloadType": "str",
+        "x": 190,
+        "y": 840,
+        "wires": [
+            [
+                "70ace5ae87955e7c"
+            ]
+        ]
+    },
+    {
+        "id": "70ace5ae87955e7c",
+        "type": "mqtt out",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "solicitar_excel",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "5330c993a11be19f",
+        "x": 440,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "e8ac461a2a9ad872",
+        "type": "ui_template",
+        "z": "9198709cf1cf22f7",
+        "group": "86b05145095c4feb",
+        "name": "",
+        "order": 24,
+        "width": 0,
+        "height": 0,
+        "format": "<a href=\"http://192.168.101.75:5000/descargar_excel\" target=\"_blank\" style=\"display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease;\">\n    Descargar archivo Excel\n</a>\n\n<!-- Efecto hover -->\n<style>\n    a:hover {\n        background-color: #45a049;\n    }\n</style>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 320,
+        "y": 940,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fd396fedf3b20a87",
+        "type": "ui_slider",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "label": "Setpoint",
+        "tooltip": "",
+        "group": "86b05145095c4feb",
+        "order": 13,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "450",
+        "step": 1,
+        "className": "",
+        "x": 660,
+        "y": 1000,
+        "wires": [
+            [
+                "82f020c750901366"
+            ]
+        ]
+    },
+    {
+        "id": "82f020c750901366",
+        "type": "mqtt out",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "mqtt_topic_setpoint",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "5330c993a11be19f",
+        "x": 910,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "3d5245da54301dac",
+        "type": "ui_slider",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "label": "Kp",
+        "tooltip": "",
+        "group": "86b05145095c4feb",
+        "order": 19,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "1",
+        "step": "0.01",
+        "className": "",
+        "x": 650,
+        "y": 1100,
+        "wires": [
+            [
+                "b8ac5356584f090e"
+            ]
+        ]
+    },
+    {
+        "id": "81532693a6e4deed",
+        "type": "ui_slider",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "label": "Ki",
+        "tooltip": "",
+        "group": "86b05145095c4feb",
+        "order": 14,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "1",
+        "step": "0.01",
+        "className": "",
+        "x": 650,
+        "y": 1180,
+        "wires": [
+            [
+                "8d4693750f9f115f"
+            ]
+        ]
+    },
+    {
+        "id": "05be0eff3c0cf167",
+        "type": "ui_slider",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "label": "Kd",
+        "tooltip": "",
+        "group": "86b05145095c4feb",
+        "order": 20,
+        "width": 3,
+        "height": 1,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "1",
+        "step": "0.01",
+        "className": "",
+        "x": 650,
+        "y": 1260,
+        "wires": [
+            [
+                "1c53e18dfdcb19e9"
+            ]
+        ]
+    },
+    {
+        "id": "b8ac5356584f090e",
+        "type": "mqtt out",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "Kp_topic",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "5330c993a11be19f",
+        "x": 920,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "8d4693750f9f115f",
+        "type": "mqtt out",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "Ki_topic",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "5330c993a11be19f",
+        "x": 920,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "1c53e18dfdcb19e9",
+        "type": "mqtt out",
+        "z": "9198709cf1cf22f7",
+        "name": "",
+        "topic": "Kd_topic",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "5330c993a11be19f",
+        "x": 920,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "af0ac3db7af09169",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "15fa392ee697ca93",
+        "order": 2,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "b7f7e7fe6fd80880",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "15fa392ee697ca93",
+        "order": 3,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "c8294e1ebe51f61d",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 4,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "d95eb40506b917f0",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "c18af61673308d61",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 6,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b63e0bd759c9cdcd",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 7,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "cdcbd8d7a19a2db3",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 8,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b1216a48a9fa24e9",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 9,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "2bebc9c01ad95b52",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 15,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "f84c857fbf314e37",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 18,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "d35e095d1b0a5eaf",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 21,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "5a6c7560cdedab42",
+        "type": "ui_spacer",
+        "z": "9198709cf1cf22f7",
+        "name": "spacer",
+        "group": "86b05145095c4feb",
+        "order": 23,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "5330c993a11be19f",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.34.10",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "86b05145095c4feb",
+        "type": "ui_group",
+        "name": "Informacion de Huevos",
+        "tab": "d6de538f7eac36c2",
+        "order": 2,
+        "disp": true,
+        "width": 24,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f978cae05618ce20",
+        "type": "ui_group",
+        "name": "Login",
+        "tab": "b7f9102b1c9342c3",
+        "order": 1,
+        "disp": true,
+        "width": 25,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d6de538f7eac36c2",
+        "type": "ui_tab",
+        "name": "Seleccionador de Huevos",
+        "icon": "mi-egg",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "b7f9102b1c9342c3",
+        "type": "ui_tab",
+        "name": "Login",
+        "icon": "mi-face",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]

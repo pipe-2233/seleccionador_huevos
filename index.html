@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egg Quality Detector</title>
+    <title>Egg Quality Detector - Real-Time</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <style>
         body {
@@ -13,26 +13,47 @@
             border: 1px solid #ced4da;
             border-radius: 8px;
         }
+        video {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center text-primary">Egg Quality Detector</h1>
-        <p class="text-center text-muted">Upload an image to check if the egg is clean or dirty</p>
+        <h1 class="text-center text-primary">Egg Quality Detector - Real-Time</h1>
+        <p class="text-center text-muted">Upload an image or video to analyze egg quality in real-time</p>
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <form id="uploadForm">
+                <!-- Image Upload Section -->
+                <h4>Analyze Image</h4>
+                <form id="uploadImageForm">
                     <div class="mb-3">
                         <label for="imageInput" class="form-label">Upload Image</label>
                         <input class="form-control" type="file" id="imageInput" accept="image/*" required>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Analyze</button>
+                        <button type="submit" class="btn btn-primary">Analyze Image</button>
                     </div>
                 </form>
                 <canvas id="previewCanvas" class="mt-4 mx-auto d-block" width="400" height="300"></canvas>
-                <div id="results" class="mt-3 text-center">
-                    <p class="text-muted">Results will appear on the canvas...</p>
+                <hr>
+
+                <!-- Video Upload Section -->
+                <h4>Analyze Video</h4>
+                <form id="uploadVideoForm">
+                    <div class="mb-3">
+                        <label for="videoInput" class="form-label">Upload Video</label>
+                        <input class="form-control" type="file" id="videoInput" accept="video/*" required>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-secondary">Analyze Video</button>
+                    </div>
+                </form>
+                <video id="videoPreview" controls></video>
+                <div id="videoResults" class="mt-3 text-center">
+                    <p class="text-muted">Video results will appear here...</p>
                 </div>
             </div>
         </div>
@@ -40,14 +61,20 @@
 
     <script>
         const apiKey = "u247o3wH5luRvqN29OnN";
-        const apiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
-        
+        const imageApiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
+        const videoApiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
+
         const imageInput = document.getElementById('imageInput');
         const previewCanvas = document.getElementById('previewCanvas');
         const ctx = previewCanvas.getContext('2d');
-        const uploadForm = document.getElementById('uploadForm');
+        const uploadImageForm = document.getElementById('uploadImageForm');
 
-        // Show the uploaded image on the canvas
+        const videoInput = document.getElementById('videoInput');
+        const uploadVideoForm = document.getElementById('uploadVideoForm');
+        const videoPreview = document.getElementById('videoPreview');
+        const videoResults = document.getElementById('videoResults');
+
+        // Handle Image Upload
         imageInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -70,8 +97,7 @@
             }
         });
 
-        // Handle form submission
-        uploadForm.addEventListener('submit', async function(event) {
+        uploadImageForm.addEventListener('submit', async function(event) {
             event.preventDefault();
             const file = imageInput.files[0];
             if (!file) {
@@ -83,7 +109,7 @@
             formData.append("file", file);
 
             try {
-                const response = await fetch(`${apiUrl}?api_key=${apiKey}`, {
+                const response = await fetch(`${imageApiUrl}?api_key=${apiKey}`, {
                     method: "POST",
                     body: formData,
                 });
@@ -96,13 +122,11 @@
             }
         });
 
-        // Draw predictions on the canvas
         function drawPredictions(result) {
             if (result && result.predictions && result.predictions.length > 0) {
                 result.predictions.forEach(prediction => {
                     const { x, y, width, height, class: label, confidence } = prediction;
 
-                    // Scale the prediction coordinates to the canvas size
                     const scaleX = previewCanvas.width / result.image.width;
                     const scaleY = previewCanvas.height / result.image.height;
 
@@ -111,7 +135,6 @@
                     const scaledWidth = width * scaleX;
                     const scaledHeight = height * scaleY;
 
-                    // Draw the bounding box
                     ctx.strokeStyle = "red";
                     ctx.lineWidth = 2;
                     ctx.strokeRect(
@@ -121,7 +144,6 @@
                         scaledHeight
                     );
 
-                    // Draw the label
                     ctx.fillStyle = "red";
                     ctx.font = "14px Arial";
                     ctx.fillText(
@@ -132,6 +154,48 @@
                 });
             } else {
                 alert("No predictions found. Try a different image.");
+            }
+        }
+
+        // Handle Video Upload
+        uploadVideoForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const file = videoInput.files[0];
+            if (!file) {
+                alert('Please upload a video!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                videoResults.innerHTML = '<p class="text-muted">Processing video...</p>';
+
+                const response = await fetch(`${videoApiUrl}/batch-video?api_key=${apiKey}`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const { job_id } = await response.json();
+                pollVideoResults(job_id);
+            } catch (error) {
+                console.error(error);
+                alert('Error: Unable to process the video.');
+            }
+        });
+
+        async function pollVideoResults(job_id) {
+            const pollUrl = `${videoApiUrl}/batch-video/${job_id}?api_key=${apiKey}`;
+            try {
+                const response = await fetch(pollUrl);
+                const result = await response.json();
+
+                videoResults.innerHTML = '<p class="text-success">Video processed successfully!</p>';
+                // Optionally render frames with predictions here
+            } catch (error) {
+                console.error(error);
+                alert('Error fetching video results.');
             }
         }
     </script>

@@ -42,7 +42,7 @@
                 <hr>
 
                 <!-- Video Upload Section -->
-                <h4>Analyze Video</h4>
+                <h4>Analyze Video (Real-Time)</h4>
                 <form id="uploadVideoForm">
                     <div class="mb-3">
                         <label for="videoInput" class="form-label">Upload Video</label>
@@ -62,47 +62,19 @@
 
     <script>
         const apiKey = "u247o3wH5luRvqN29OnN";
-        const imageApiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
         const videoApiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
-
-        const imageInput = document.getElementById('imageInput');
-        const previewCanvas = document.getElementById('previewCanvas');
-        const ctx = previewCanvas.getContext('2d');
-        const uploadImageForm = document.getElementById('uploadImageForm');
 
         const videoInput = document.getElementById('videoInput');
         const uploadVideoForm = document.getElementById('uploadVideoForm');
         const videoPreview = document.getElementById('videoPreview');
         const videoResults = document.getElementById('videoResults');
 
-        // Handle Image Upload
-        imageInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-                        const scale = Math.min(
-                            previewCanvas.width / img.width,
-                            previewCanvas.height / img.height
-                        );
-                        const x = (previewCanvas.width / 2) - (img.width / 2) * scale;
-                        const y = (previewCanvas.height / 2) - (img.height / 2) * scale;
-                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        uploadImageForm.addEventListener('submit', async function(event) {
+        // Handle Video Upload
+        uploadVideoForm.addEventListener('submit', async function(event) {
             event.preventDefault();
-            const file = imageInput.files[0];
+            const file = videoInput.files[0];
             if (!file) {
-                alert('Please upload an image!');
+                alert('Please upload a video!');
                 return;
             }
 
@@ -110,54 +82,47 @@
             formData.append("file", file);
 
             try {
-                const response = await fetch(`${imageApiUrl}?api_key=${apiKey}`, {
+                const response = await fetch(`${videoApiUrl}?api_key=${apiKey}`, {
                     method: "POST",
                     body: formData,
                 });
 
-                const result = await response.json();
-                drawPredictions(result);
+                const data = await response.json();
+                if (data.job) {
+                    pollVideoResults(data.job);
+                } else {
+                    alert("Error: Unable to process the video.");
+                }
             } catch (error) {
                 console.error(error);
-                alert('Error: Unable to process the image.');
+                alert('Error: Unable to process the video.');
             }
         });
 
-        function drawPredictions(result) {
-            if (result && result.predictions && result.predictions.length > 0) {
-                result.predictions.forEach(prediction => {
-                    const { x, y, width, height, class: label, confidence } = prediction;
+        async function pollVideoResults(jobId) {
+            try {
+                const response = await fetch(`${videoApiUrl}/batch-video/${jobId}?api_key=${apiKey}`);
+                const results = await response.json();
 
-                    const scaleX = previewCanvas.width / result.image.width;
-                    const scaleY = previewCanvas.height / result.image.height;
-
-                    const scaledX = x * scaleX;
-                    const scaledY = y * scaleY;
-                    const scaledWidth = width * scaleX;
-                    const scaledHeight = height * scaleY;
-
-                    ctx.strokeStyle = "red";
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(
-                        scaledX - scaledWidth / 2,
-                        scaledY - scaledHeight / 2,
-                        scaledWidth,
-                        scaledHeight
-                    );
-
-                    ctx.fillStyle = "red";
-                    ctx.font = "14px Arial";
-                    ctx.fillText(
-                        `${label} (${Math.round(confidence * 100)}%)`,
-                        scaledX - scaledWidth / 2,
-                        scaledY - scaledHeight / 2 - 5
-                    );
-                });
-            } else {
-                alert("No predictions found. Try a different image.");
+                if (results.status === "processing") {
+                    setTimeout(() => pollVideoResults(jobId), 2000);
+                } else if (results.status === "completed") {
+                    displayVideoResults(results);
+                } else {
+                    alert("Error: Video processing failed.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error: Unable to fetch video results.');
             }
         }
+
+        function displayVideoResults(results) {
+            videoResults.innerHTML = `
+                <p class="text-success">Video processed successfully!</p>
+                <pre>${JSON.stringify(results.predictions, null, 2)}</pre>
+            `;
+        }
     </script>
-    
 </body>
 </html>

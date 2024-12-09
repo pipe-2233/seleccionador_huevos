@@ -1,37 +1,88 @@
-🥚 Seleccionador de Huevos
+# 🥚 **Seleccionador de Huevos**  
 
-¡Bienvenido al proyecto Seleccionador de Huevos! 🐣✨ Este sistema utiliza un modelo de visión artificial para clasificar y detectar diferentes tipos de huevos, así como evaluar su limpieza y otras características.
+¡Bienvenido al proyecto **Seleccionador de Huevos**! 🐣✨ Este sistema combina **Visión Artificial** y tecnologías **IoT** para clasificar huevos y analizar su limpieza en tiempo real. Diseñado para entornos industriales y experimentales, el proyecto utiliza herramientas modernas para optimizar procesos de clasificación.
 
+---
 
-🌟 Características Principales
+## 🌟 **Características Principales**  
 
-🔍 Detección precisa: Entrenado con un banco de imágenes robusto de la base de datos de Roboflow.
+- **🔍 Detección precisa**:  
+  Entrenado con un banco de imágenes robusto de la base de datos de **Roboflow**, detecta y clasifica huevos con alta precisión.  
 
-🥚 Clasificación avanzada: Identifica diferentes tipos de huevos y evalúa su nivel de limpieza (¡hasta detecta suciedad!).
+- **🥚 Clasificación avanzada**:  
+  Identifica tipos de huevos (limpio, sucio, marrón, etc.) evaluando detalles importantes como su nivel de limpieza.  
 
-🚀 Rendimiento optimizado: Diseñado para funcionar eficientemente en sistemas embebidos como Raspberry Pi o integrarse en sistemas más grandes.
+- **🚀 Rendimiento optimizado**:  
+  Funciona eficientemente en plataformas embebidas como **Raspberry Pi** y puede integrarse en sistemas más grandes.
 
+---
 
-🛠️ ¿Cómo funciona?
+## 🛠️ **Tecnologías y Funcionamiento**  
 
-Entrenamiento del modelo: Se utilizó un conjunto de datos curado de Roboflow para entrenar el modelo con etiquetas como "limpio", "sucio", "huevo marrón", etc.
-Detección en tiempo real: Captura imágenes en tiempo real y las procesa para clasificar los huevos según sus características.
-Resultados visualizados: Los resultados se envían a plataformas como Node-RED o Grafana para su análisis.
+### 🔗 **IoT y Protocolos**
+El proyecto destaca por su integración con tecnologías IoT:  
 
-📸 Uso del Sensor
+- **📡 MQTT (Message Queuing Telemetry Transport)**:  
+  Permite la comunicación rápida y liviana entre dispositivos.  
+  - **Mosquitto**: Broker MQTT configurado para recibir datos del modelo de detección.  
+  - Publicación de resultados en temas como `clase_huevo` o `huevo_en_posicion`.  
 
-El sistema se puede activar mediante un sensor ultrasónico que dispara la captura de imágenes y el procesamiento del modelo.
+- **🖥️ Node-RED**:  
+  Diseñado para monitorear y controlar el sistema en tiempo real:  
+  - Gráficos interactivos que muestran conteos y características de los huevos.  
+  - Descarga de resultados en formato **Excel** directamente desde la interfaz.  
 
+### 📉 **Visualización y Almacenamiento**  
 
-🔗 Integraciones
+- **📊 Grafana**:  
+  Visualización de datos históricos mediante gráficos interactivos, alimentados por:  
+  - **InfluxDB**: Base de datos diseñada para manejar grandes volúmenes de datos en tiempo real.  
 
-✅ Node-RED: Visualiza y controla los resultados en tiempo real.
+### 📸 **Automatización con Sensores**  
 
-✅ Grafana: Genera gráficos interactivos con los datos procesados.
+- **Ultrasónico**:  
+  Activa la captura de imágenes cuando detecta la presencia de un huevo.  
 
-✅ InfluxDB: Registro eficiente de datos históricos.
+- **Raspberry Pi**:  
+  Procesa la señal del sensor y colabora con el sistema principal para enviar datos al modelo de clasificación.  
 
+---
 
-🎯 Objetivo del Proyecto
+## 🎯 **Objetivos del Proyecto**  
 
-Automatizar y optimizar el proceso de clasificación de huevos en entornos industriales o experimentales. ¡Todo esto de forma sencilla, rápida y eficiente!
+- **Automatización**: Optimizar el proceso de clasificación de huevos en la industria.  
+- **Eficiencia**: Usar recursos ligeros como MQTT para una integración rápida y estable.  
+- **Escalabilidad**: Compatible con sistemas embebidos y plataformas industriales más avanzadas.  
+
+---
+
+## 🔧 **¿Cómo se Implementa?**  
+
+1. **Entrenamiento del Modelo**:  
+   - Conjunto de datos etiquetados de **Roboflow** con características como "huevo limpio", "sucio", "marrón", etc.  
+
+2. **Integración de Sensores**:  
+   - Sensor ultrasónico detecta huevos en movimiento y activa el sistema.  
+
+3. **Procesamiento en Tiempo Real**:  
+   - La Raspberry Pi captura la señal, dispara la cámara y envía imágenes al modelo.  
+   - Resultados procesados y enviados a plataformas como Node-RED y Grafana.  
+
+4. **Almacenamiento y Visualización**:  
+   - Los datos procesados se registran en **InfluxDB** y se visualizan en **Grafana**.  
+
+---
+
+## ✨ **Impacto y Futuro**  
+
+Este proyecto combina **Visión Artificial**, **IoT**, y análisis en tiempo real, ofreciendo una solución escalable para automatizar procesos industriales. En el futuro, puede extenderse para incorporar:  
+
+- Análisis predictivo basado en datos históricos.  
+- Integración con otros sensores y plataformas.  
+- Mejora del modelo con aprendizaje continuo.  
+
+¡El **Seleccionador de Huevos** marca el inicio de un cambio en la industria, optimizando procesos con innovación y tecnología! 🚀  
+
+---
+
+> **Desarrollado con pasión por automatización e IoT. 🛠️**  

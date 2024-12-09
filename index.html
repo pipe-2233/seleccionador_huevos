@@ -13,26 +13,38 @@
             border: 1px solid #ced4da;
             border-radius: 8px;
         }
+        #videoElement {
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            width: 100%;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="text-center text-primary">Egg Quality Detector</h1>
-        <p class="text-center text-muted">Upload an image to check if the egg is clean or dirty</p>
+        <p class="text-center text-muted">Upload an image or video to check egg quality</p>
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <form id="uploadForm">
                     <div class="mb-3">
-                        <label for="imageInput" class="form-label">Upload Image</label>
-                        <input class="form-control" type="file" id="imageInput" accept="image/*" required>
+                        <label for="mediaInput" class="form-label">Upload Image/Video</label>
+                        <input class="form-control" type="file" id="mediaInput" accept="image/*,video/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="youtubeLink" class="form-label">Or Enter YouTube Link</label>
+                        <input class="form-control" type="url" id="youtubeLink" placeholder="https://www.youtube.com/watch?v=example">
                     </div>
                     <div class="text-center">
+                        <button type="button" id="startCamera" class="btn btn-secondary">Use Camera</button>
                         <button type="submit" class="btn btn-primary">Analyze</button>
                     </div>
                 </form>
+                <video id="videoElement" autoplay muted></video>
                 <canvas id="previewCanvas" class="mt-4 mx-auto d-block" width="400" height="300"></canvas>
                 <div id="results" class="mt-3 text-center">
-                    <p class="text-muted">Results will appear on the canvas...</p>
+                    <p class="text-muted">Results will appear here...</p>
                 </div>
             </div>
         </div>
@@ -41,97 +53,118 @@
     <script>
         const apiKey = "u247o3wH5luRvqN29OnN";
         const apiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
-        
-        const imageInput = document.getElementById('imageInput');
-        const previewCanvas = document.getElementById('previewCanvas');
-        const ctx = previewCanvas.getContext('2d');
-        const uploadForm = document.getElementById('uploadForm');
 
-        // Show the uploaded image on the canvas
-        imageInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-                        const scale = Math.min(
-                            previewCanvas.width / img.width,
-                            previewCanvas.height / img.height
-                        );
-                        const x = (previewCanvas.width / 2) - (img.width / 2) * scale;
-                        const y = (previewCanvas.height / 2) - (img.height / 2) * scale;
-                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        const mediaInput = document.getElementById('mediaInput');
+        const youtubeLink = document.getElementById('youtubeLink');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const videoElement = document.getElementById('videoElement');
+        const startCameraButton = document.getElementById('startCamera');
+        const uploadForm = document.getElementById('uploadForm');
+        const ctx = previewCanvas.getContext('2d');
+        let cameraStream = null;
+
+        // Start camera
+        startCameraButton.addEventListener('click', async () => {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    videoElement.srcObject = cameraStream;
+                    videoElement.style.display = 'block';
+                } catch (error) {
+                    console.error('Camera access error:', error);
+                    alert('Could not access the camera.');
+                }
+            } else {
+                alert('Camera not supported on this device.');
             }
         });
 
         // Handle form submission
-        uploadForm.addEventListener('submit', async function(event) {
+        uploadForm.addEventListener('submit', async function (event) {
             event.preventDefault();
-            const file = imageInput.files[0];
-            if (!file) {
-                alert('Please upload an image!');
-                return;
-            }
 
+            if (mediaInput.files.length > 0) {
+                // File upload
+                const file = mediaInput.files[0];
+                if (file.type.startsWith('image/')) {
+                    await processImage(file);
+                } else if (file.type.startsWith('video/')) {
+                    await processVideo(file);
+                }
+            } else if (youtubeLink.value) {
+                // YouTube link
+                await processYouTubeLink(youtubeLink.value);
+            } else if (cameraStream) {
+                // Process camera feed
+                processCameraFrame();
+            } else {
+                alert('Please upload a file, provide a YouTube link, or use the camera.');
+            }
+        });
+
+        async function processImage(file) {
             const formData = new FormData();
-            formData.append("file", file);
+            formData.append('file', file);
 
             try {
                 const response = await fetch(`${apiUrl}?api_key=${apiKey}`, {
-                    method: "POST",
+                    method: 'POST',
                     body: formData,
                 });
 
                 const result = await response.json();
                 drawPredictions(result);
             } catch (error) {
-                console.error(error);
+                console.error('Image processing error:', error);
                 alert('Error: Unable to process the image.');
             }
-        });
+        }
 
-        // Draw predictions on the canvas
+        async function processVideo(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${apiUrl}/batch-video?api_key=${apiKey}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+                console.log('Video results:', result);
+                alert('Video processed successfully.');
+            } catch (error) {
+                console.error('Video processing error:', error);
+                alert('Error: Unable to process the video.');
+            }
+        }
+
+        async function processYouTubeLink(link) {
+            alert(`YouTube video processing is not yet implemented: ${link}`);
+        }
+
+        function processCameraFrame() {
+            const frame = new Image();
+            frame.src = videoElement;
+            ctx.drawImage(frame, 0, 0, previewCanvas.width, previewCanvas.height);
+            alert('Camera frame captured. Processing not implemented yet.');
+        }
+
         function drawPredictions(result) {
             if (result && result.predictions && result.predictions.length > 0) {
                 result.predictions.forEach(prediction => {
                     const { x, y, width, height, class: label, confidence } = prediction;
 
-                    // Scale the prediction coordinates to the canvas size
-                    const scaleX = previewCanvas.width / result.image.width;
-                    const scaleY = previewCanvas.height / result.image.height;
-
-                    const scaledX = x * scaleX;
-                    const scaledY = y * scaleY;
-                    const scaledWidth = width * scaleX;
-                    const scaledHeight = height * scaleY;
-
-                    // Draw the bounding box
-                    ctx.strokeStyle = "red";
+                    ctx.strokeStyle = 'red';
                     ctx.lineWidth = 2;
-                    ctx.strokeRect(
-                        scaledX - scaledWidth / 2,
-                        scaledY - scaledHeight / 2,
-                        scaledWidth,
-                        scaledHeight
-                    );
+                    ctx.strokeRect(x, y, width, height);
 
-                    // Draw the label
-                    ctx.fillStyle = "red";
-                    ctx.font = "14px Arial";
-                    ctx.fillText(
-                        `${label} (${Math.round(confidence * 100)}%)`,
-                        scaledX - scaledWidth / 2,
-                        scaledY - scaledHeight / 2 - 5
-                    );
+                    ctx.fillStyle = 'red';
+                    ctx.font = '14px Arial';
+                    ctx.fillText(`${label} (${Math.round(confidence * 100)}%)`, x, y - 5);
                 });
             } else {
-                alert("No predictions found. Try a different image.");
+                alert('No predictions found. Try a different file.');
             }
         }
     </script>

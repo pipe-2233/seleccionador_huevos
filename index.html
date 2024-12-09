@@ -3,63 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egg Quality Detector - Real-Time</title>
+    <title>Egg Quality Detector</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" type="image/png">
     <style>
         body {
             background-color: #f8f9fa;
         }
-        video {
-            display: block;
-            margin: 20px auto;
-            max-width: 100%;
-        }
-        #cameraPreview {
-            border: 2px solid #ced4da;
+        #previewCanvas {
+            border: 1px solid #ced4da;
             border-radius: 8px;
-            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center text-primary">Egg Quality Detector - Real-Time</h1>
-        <p class="text-center text-muted">Upload, link, or capture video to analyze egg quality in real-time</p>
+        <h1 class="text-center text-primary">Egg Quality Detector</h1>
+        <p class="text-center text-muted">Upload an image to check if the egg is clean or dirty</p>
         <div class="row justify-content-center">
-            <div class="col-md-8">
-                <!-- Video Upload Section -->
-                <h4>Analyze Video</h4>
-                <div class="mb-4">
-                    <button class="btn btn-secondary me-2" onclick="showSection('file')">Upload File</button>
-                    <button class="btn btn-secondary me-2" onclick="showSection('url')">Use URL</button>
-                    <button class="btn btn-secondary" onclick="showSection('camera')">Use Camera</button>
-                </div>
-
-                <!-- File Upload -->
-                <form id="uploadVideoForm" class="d-none">
-                    <label for="videoInput" class="form-label">Upload Video File</label>
-                    <input class="form-control mb-3" type="file" id="videoInput" accept="video/*">
-                    <button type="submit" class="btn btn-primary">Analyze File</button>
+            <div class="col-md-6">
+                <form id="uploadForm">
+                    <div class="mb-3">
+                        <label for="imageInput" class="form-label">Upload Image</label>
+                        <input class="form-control" type="file" id="imageInput" accept="image/*" required>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Analyze</button>
+                    </div>
                 </form>
-
-                <!-- Video URL -->
-                <form id="videoURLForm" class="d-none">
-                    <label for="videoURLInput" class="form-label">Enter Video URL</label>
-                    <input class="form-control mb-3" type="url" id="videoURLInput" placeholder="https://example.com/video.mp4">
-                    <button type="submit" class="btn btn-primary">Analyze URL</button>
-                </form>
-
-                <!-- Camera Capture -->
-                <div id="cameraSection" class="d-none">
-                    <video id="cameraPreview" autoplay></video>
-                    <button class="btn btn-danger mt-3" onclick="stopCamera()">Stop Camera</button>
-                </div>
-
-                <!-- Results -->
-                <video id="videoPreview" controls class="mt-4"></video>
-                <div id="videoResults" class="mt-3 text-center">
-                    <p class="text-muted">Results will appear here...</p>
+                <canvas id="previewCanvas" class="mt-4 mx-auto d-block" width="400" height="300"></canvas>
+                <div id="results" class="mt-3 text-center">
+                    <p class="text-muted">Results will appear on the canvas...</p>
                 </div>
             </div>
         </div>
@@ -67,108 +40,99 @@
 
     <script>
         const apiKey = "u247o3wH5luRvqN29OnN";
-        const videoApiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
-        const videoPreview = document.getElementById('videoPreview');
-        const videoResults = document.getElementById('videoResults');
-        const cameraPreview = document.getElementById('cameraPreview');
-        let cameraStream;
+        const apiUrl = "https://detect.roboflow.com/eggs14-ub7ik/1";
+        
+        const imageInput = document.getElementById('imageInput');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const ctx = previewCanvas.getContext('2d');
+        const uploadForm = document.getElementById('uploadForm');
 
-        // Show/Hide sections
-        function showSection(type) {
-            document.getElementById('uploadVideoForm').classList.toggle('d-none', type !== 'file');
-            document.getElementById('videoURLForm').classList.toggle('d-none', type !== 'url');
-            document.getElementById('cameraSection').classList.toggle('d-none', type !== 'camera');
+        // Show the uploaded image on the canvas
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                        const scale = Math.min(
+                            previewCanvas.width / img.width,
+                            previewCanvas.height / img.height
+                        );
+                        const x = (previewCanvas.width / 2) - (img.width / 2) * scale;
+                        const y = (previewCanvas.height / 2) - (img.height / 2) * scale;
+                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-            if (type === 'camera') startCamera();
-        }
-
-        // Handle File Upload
-        document.getElementById('uploadVideoForm').addEventListener('submit', async (event) => {
+        // Handle form submission
+        uploadForm.addEventListener('submit', async function(event) {
             event.preventDefault();
-            const file = document.getElementById('videoInput').files[0];
-            if (!file) return alert('Please select a video file.');
+            const file = imageInput.files[0];
+            if (!file) {
+                alert('Please upload an image!');
+                return;
+            }
 
             const formData = new FormData();
             formData.append("file", file);
-            await analyzeVideo(formData);
-        });
 
-        // Handle Video URL
-        document.getElementById('videoURLForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const videoURL = document.getElementById('videoURLInput').value;
-            if (!videoURL) return alert('Please enter a video URL.');
-
-            const formData = new FormData();
-            formData.append("url", videoURL);
-            await analyzeVideo(formData);
-        });
-
-        // Start Camera
-        async function startCamera() {
             try {
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                cameraPreview.srcObject = cameraStream;
-                cameraPreview.style.display = "block";
-            } catch (error) {
-                alert('Unable to access camera.');
-            }
-        }
-
-        // Stop Camera
-        function stopCamera() {
-            if (cameraStream) {
-                const tracks = cameraStream.getTracks();
-                tracks.forEach(track => track.stop());
-            }
-            cameraPreview.style.display = "none";
-        }
-
-        // Analyze Video
-        async function analyzeVideo(formData) {
-            try {
-                const response = await fetch(`${videoApiUrl}?api_key=${apiKey}`, {
+                const response = await fetch(`${apiUrl}?api_key=${apiKey}`, {
                     method: "POST",
                     body: formData,
                 });
 
-                const data = await response.json();
-                if (data.job) {
-                    pollVideoResults(data.job);
-                } else {
-                    alert("Error: Unable to process the video.");
-                }
+                const result = await response.json();
+                drawPredictions(result);
             } catch (error) {
                 console.error(error);
-                alert('Error: Unable to process the video.');
+                alert('Error: Unable to process the image.');
             }
-        }
+        });
 
-        // Poll Video Results
-        async function pollVideoResults(jobId) {
-            try {
-                const response = await fetch(`${videoApiUrl}/batch-video/${jobId}?api_key=${apiKey}`);
-                const results = await response.json();
+        // Draw predictions on the canvas
+        function drawPredictions(result) {
+            if (result && result.predictions && result.predictions.length > 0) {
+                result.predictions.forEach(prediction => {
+                    const { x, y, width, height, class: label, confidence } = prediction;
 
-                if (results.status === "processing") {
-                    setTimeout(() => pollVideoResults(jobId), 2000);
-                } else if (results.status === "completed") {
-                    displayVideoResults(results);
-                } else {
-                    alert("Error: Video processing failed.");
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Error: Unable to fetch video results.');
+                    // Scale the prediction coordinates to the canvas size
+                    const scaleX = previewCanvas.width / result.image.width;
+                    const scaleY = previewCanvas.height / result.image.height;
+
+                    const scaledX = x * scaleX;
+                    const scaledY = y * scaleY;
+                    const scaledWidth = width * scaleX;
+                    const scaledHeight = height * scaleY;
+
+                    // Draw the bounding box
+                    ctx.strokeStyle = "red";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(
+                        scaledX - scaledWidth / 2,
+                        scaledY - scaledHeight / 2,
+                        scaledWidth,
+                        scaledHeight
+                    );
+
+                    // Draw the label
+                    ctx.fillStyle = "red";
+                    ctx.font = "14px Arial";
+                    ctx.fillText(
+                        `${label} (${Math.round(confidence * 100)}%)`,
+                        scaledX - scaledWidth / 2,
+                        scaledY - scaledHeight / 2 - 5
+                    );
+                });
+            } else {
+                alert("No predictions found. Try a different image.");
             }
-        }
-
-        // Display Results
-        function displayVideoResults(results) {
-            videoResults.innerHTML = `
-                <p class="text-success">Video processed successfully!</p>
-                <pre>${JSON.stringify(results.predictions, null, 2)}</pre>
-            `;
         }
     </script>
 </body>
